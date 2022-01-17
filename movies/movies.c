@@ -51,7 +51,8 @@ struct movie* createMovie(char *curLine)
 		langtoken != NULL;
 		langtoken = strtok_r(NULL, ";", &langptr))
 	{
-		curMovie->languages[langIdx] = langtoken;
+		curMovie->languages[langIdx] = calloc(strlen(langtoken) + 1, sizeof(char));
+		strcpy(curMovie->languages[langIdx], langtoken);
 		++langIdx;
 	}
 
@@ -112,25 +113,6 @@ struct movie* processFile(char* filePath)
 	return head;
 }
 
-
-// print stuff
-void printMovie(struct movie* aMovie)
-{
-	printf("%s, %i, %s, %.1f\n", 
-	aMovie->title, 
-	aMovie->year, 
-	aMovie->languages, 
-	aMovie->rating);
-}
-
-void printMovieList(struct movie* list)
-{
-	while (list != NULL)
-	{
-		printMovie(list);
-		list = list->next;
-	}
-}
 
 /* ----------------------------------------------------------------------------
 | USER INTERACTIVITY FUNCTIONS
@@ -215,7 +197,36 @@ void bestPerYear(struct movie* list)
 // Show movies and their year of release for a specified language (option 3)
 void moviesWithLang(struct movie* list, char* lang)
 {
+	// Flag if movie has selected language
+	int flag = 0;
 
+	// Loop through each movie in the linked list and check if the language is supported
+	while (list != NULL)
+	{
+		// Check through the available languages of the current movie
+		for (int i = 0; i < 5; ++i)
+		{
+			// Break if there are no more languages left
+			if (list->languages[i] == NULL)
+			{
+				break;
+			}
+
+			// Print out movie if it supports the selected language
+			if (strcmp(list->languages[i], lang) == 0)
+			{
+				flag = 1;
+				printf("%d %s\n", list->year, list->title);
+			}
+		}
+		list = list->next;
+	}
+
+	// Inform user if language is no supported
+	if (flag != 1)
+	{
+		printf("No data about movies released in %s.\n", lang);
+	}
 }
 
 int main(int argc, char* argv[])
@@ -256,12 +267,14 @@ int main(int argc, char* argv[])
 			bestPerYear(list);
 		}
 		else if (input == 3)
-		{ 
-			printf("3 entered\n");
+		{
+			printf("Enter the language you want to see which movies support it: ");
+			char inputLang[20];
+			scanf("%s", inputLang);
+			moviesWithLang(list, inputLang);
 		}
 		else if (input == 4)
 		{ 
-			printf("4 entered\n");
 			break;
 		}
 		else 
@@ -271,6 +284,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 };
 
