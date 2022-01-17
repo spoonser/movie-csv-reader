@@ -5,13 +5,16 @@
 /* Structs */
 struct movie
 {
+	// Movie attributes
 	char* title;
-	char* languages[];
 	int year;
 	double rating;
 
-	// pointer to next movie goes here
+	// Pointer to next movie
 	struct movie* next;
+
+	// Flexible languages array
+	char* languages[];
 };
 
 // Parse current line, which is comma delimited
@@ -33,13 +36,19 @@ struct movie* createMovie(char *curLine)
 	curMovie->year = atoi(token);
 
 	// Third is languages
-	// NEED TO SPLIT THE LANGUAGES WITH ; MAYBE?
 	char* langptr;
 	token = strtok_r(NULL, ",", &saveptr);
 	
-	// while loop or something to split the languages
-	curMovie->languages = calloc(strlen(token) + 1, sizeof(char));
-	strcpy(curMovie->languages, token);
+	// Loop through languages and add to the language array
+	int langIdx = 0;
+	char* langtoken = strtok_r(token, "[", &langptr);	
+	while (langtoken != NULL)
+	{
+		char *langtoken = strtok_r(NULL, ";", &langptr);
+		curMovie->languages[langIdx] = calloc(strlen(token) + 1, sizeof(char));
+		strcpy(curMovie->languages[langIdx], langtoken);
+		++langIdx;
+	}
 
 	// Final token is the rating
 	token = strtok_r(NULL, "\n", &saveptr);
