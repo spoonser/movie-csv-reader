@@ -109,7 +109,10 @@ struct movie* processFile(char* filePath)
 	}
 	free(curLine);
 	fclose(movieFile);
-	printf("Processed file %s and parsed data for %i movies\n", filePath, movieCount);
+
+	// Get last token of filepath (final "/") and inform user the file was processed
+	char *fileName = strrchr(filePath, '/') + 1;
+	printf("Processed file %s and parsed data for %i movies\n", fileName, movieCount);
 	return head;
 }
 
