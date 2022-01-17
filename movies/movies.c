@@ -5,8 +5,8 @@
 /* Structs */
 struct movie
 {
-	char *title;
-	char *languages;
+	char* title;
+	char* languages[];
 	int year;
 	double rating;
 
@@ -34,7 +34,10 @@ struct movie* createMovie(char *curLine)
 
 	// Third is languages
 	// NEED TO SPLIT THE LANGUAGES WITH ; MAYBE?
+	char* langptr;
 	token = strtok_r(NULL, ",", &saveptr);
+	
+	// while loop or something to split the languages
 	curMovie->languages = calloc(strlen(token) + 1, sizeof(char));
 	strcpy(curMovie->languages, token);
 
@@ -66,9 +69,11 @@ struct movie* processFile(char* filePath)
 	// Skip first line of the file (header)
 	nread = getline(&curLine, &len, movieFile);
 
+	int movieCount = 0;
 	// Read through rest of file line by line
 	while ((nread = getline(&curLine, &len, movieFile)) != -1)
 	{
+		++movieCount;
 		// Get new movie node at current line
 		struct movie* newNode = createMovie(curLine);
 
@@ -89,6 +94,7 @@ struct movie* processFile(char* filePath)
 	}
 	free(curLine);
 	fclose(movieFile);
+	printf("Processed file %s and parsed data for %i movies\n", filePath, movieCount);
 	return head;
 }
 
@@ -96,7 +102,7 @@ struct movie* processFile(char* filePath)
 // print stuff
 void printMovie(struct movie* aMovie)
 {
-	printf("%s, %i, %s, %d\n", 
+	printf("%s, %i, %s, %.1f\n", 
 	aMovie->title, 
 	aMovie->year, 
 	aMovie->languages, 
@@ -123,7 +129,7 @@ char moviesWithLang(struct movie);
 
 int main(int argc, char* argv[])
 {
-	struct movie *list = processFile("./movies_sample_1.txt");
+	struct movie *list = processFile("./movies_sample_1.csv");
 	printMovieList(list);
 
 	return 0;
