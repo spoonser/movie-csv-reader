@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Structs */
+/* ----------------------------------------------------------------------------
+| STRUCTS
+---------------------------------------------------------------------------- */
+// Movie representation
 struct movie
 {
 	// Movie attributes
@@ -120,7 +123,6 @@ struct movie* processFile(char* filePath)
 /* ----------------------------------------------------------------------------
 | USER INTERACTIVITY FUNCTIONS
 ---------------------------------------------------------------------------- */
-
 // Print the movies released in the specified year (option 1)
 void moviesInYear(struct movie* list, int inputYear)
 {
@@ -232,6 +234,9 @@ void moviesWithLang(struct movie* list, char* lang)
 	}
 }
 
+/* ----------------------------------------------------------------------------
+| MAIN
+---------------------------------------------------------------------------- */
 int main(int argc, char* argv[])
 {
 	// Inform user of failure to enter a filename as an argument
