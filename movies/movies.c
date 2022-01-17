@@ -7,14 +7,12 @@ struct movie
 {
 	// Movie attributes
 	char* title;
+	char* languages[5];
 	int year;
 	double rating;
 
 	// Pointer to next movie
 	struct movie* next;
-
-	// Flexible languages array
-	char* languages[];
 };
 
 // Parse current line, which is comma delimited
@@ -35,18 +33,22 @@ struct movie* createMovie(char *curLine)
 	token = strtok_r(NULL, ",", &saveptr);
 	curMovie->year = atoi(token);
 
-	// Third is languages
+	// Third token is languages - requires some extra work
 	char* langptr;
 	token = strtok_r(NULL, ",", &saveptr);
 	
+	// Strip first and last character of the token ()
+	token += 1;
+	token[strlen(token)-1] = 0;
+
 	// Loop through languages and add to the language array
 	int langIdx = 0;
-	char* langtoken = strtok_r(token, "[", &langptr);	
-	while (langtoken != NULL)
+	char* langtoken;
+	for (langtoken = strtok_r(token, ";", &langptr); 
+		langtoken != NULL;
+		langtoken = strtok_r(NULL, ";", &langptr))
 	{
-		char *langtoken = strtok_r(NULL, ";", &langptr);
-		curMovie->languages[langIdx] = calloc(strlen(token) + 1, sizeof(char));
-		strcpy(curMovie->languages[langIdx], langtoken);
+		curMovie->languages[langIdx] = langtoken;
 		++langIdx;
 	}
 
@@ -128,16 +130,13 @@ void printMovieList(struct movie* list)
 }
 
 
-/* Function prototypes */
-char readCSV(char);
-char moviesInYear(struct movie);
-char bestInYear(struct movie);
-char moviesWithLang(struct movie);
-
-
-
 int main(int argc, char* argv[])
 {
+	if (argc < 2)
+	{
+		printf("You must provide the name of the file to process.\n");
+		return EXIT_FAILURE;
+	}
 	struct movie *list = processFile("./movies_sample_1.csv");
 	printMovieList(list);
 
