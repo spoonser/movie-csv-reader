@@ -15,6 +15,9 @@ struct movie
 	struct movie* next;
 };
 
+/* ----------------------------------------------------------------------------
+| FILE PROCESSING FUNCTIONS
+---------------------------------------------------------------------------- */
 // Parse current line, which is comma delimited
 // This is a struct-returning function
 struct movie* createMovie(char *curLine)
@@ -129,16 +132,144 @@ void printMovieList(struct movie* list)
 	}
 }
 
+/* ----------------------------------------------------------------------------
+| USER INTERACTIVITY FUNCTIONS
+---------------------------------------------------------------------------- */
+
+// Print the movies released in the specified year (option 1)
+void moviesInYear(struct movie* list, int inputYear)
+{
+	// Flag for checking if any films in the file were released in the input year
+	int flag = 0;
+
+	// Print out the films from the input year
+	while (list != NULL)
+	{
+		if (list->year == inputYear)
+		{
+			flag = 1;
+			printf("%s\n", list->title);
+		}
+		list  = list->next;
+	}
+
+	// Inform user if no movies were released in the specified year
+	if (flag != 1)
+	{
+		printf("No movies in the input file were released in %d.\n", inputYear);
+	}
+}
+
+// Show highest rated movie for each year (option 2)
+void bestPerYear(struct movie* list)
+{
+	// Maintain the pointer to the first movie
+	struct movie* curMovie = list;
+	// Flag for if a movie is in this year
+	int flag;
+	// Struct for best movie in this year
+	struct movie* bestInYear;
+
+
+	// Loop through all possible years and print the best ones
+	for (int i = 1900; i < 2022; ++i)
+	{
+		// Reset the flag and the best movie for the year
+		flag = 0;
+		bestInYear = NULL;
+
+		// Get the best movie in current year (i)
+		while (curMovie != NULL)
+		{
+			if (curMovie->year == i)
+			{
+				flag = 1;
+				if (bestInYear != NULL)
+				{
+					// Update best in year if the current movie rating is higher
+					if (curMovie->rating > bestInYear->rating)
+					{
+						bestInYear = curMovie;
+					}
+				}
+				// First movie found released in the year
+				else
+				{
+					bestInYear = curMovie;
+				}
+			}
+			curMovie = curMovie->next;
+		}
+
+		// If there is a best movie of the current year (i), print it
+		if (bestInYear != NULL)
+		{
+			printf("%d %.1f %s\n", bestInYear->year, bestInYear->rating, bestInYear->title);
+		}
+
+		// Reset current movie to the first in the list
+		curMovie = list;
+	}
+}
+
+// Show movies and their year of release for a specified language (option 3)
+void moviesWithLang(struct movie* list, char* lang)
+{
+
+}
 
 int main(int argc, char* argv[])
 {
+	// Inform user of failure to enter a filename as an argument
 	if (argc < 2)
 	{
 		printf("You must provide the name of the file to process.\n");
 		return EXIT_FAILURE;
 	}
-	struct movie *list = processFile("./movies_sample_1.csv");
-	printMovieList(list);
+
+	// Process movie file 
+	struct movie *list = processFile(argv[1]);
+	
+	// Ask for user input
+	int input;
+	while (1)
+	{
+		printf("\n");
+		printf("1. Show movies released in the specified year\n");
+		printf("2. Show highest rated movie for each year\n");
+		printf("3. Show the title and year of release of all movies in a specified language\n");
+		printf("4. Exit from the program\n");
+		printf("\n");
+		printf("Enter a choice from 1 to 4: ");
+		
+		// Get user input and take action
+		scanf("%d", &input);
+		if (input == 1)
+		{ 
+			int inputYear;
+			printf("Enter the year that you want to see movies from: ");
+			scanf("%d", &inputYear);
+			moviesInYear(list, inputYear);
+		}
+		else if (input == 2)
+		{ 
+			bestPerYear(list);
+		}
+		else if (input == 3)
+		{ 
+			printf("3 entered\n");
+		}
+		else if (input == 4)
+		{ 
+			printf("4 entered\n");
+			break;
+		}
+		else 
+		{	
+		// Invalid pick
+		printf("You entered an invalid choice. Try again.\n");
+		}
+	}
 
 	return 0;
 };
