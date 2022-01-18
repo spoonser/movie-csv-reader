@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
+    <None Include="movies_sample_1.csv" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2011d7e3-b1f0-4cac-a298-8469aae0dd7c}</ProjectGuid>
